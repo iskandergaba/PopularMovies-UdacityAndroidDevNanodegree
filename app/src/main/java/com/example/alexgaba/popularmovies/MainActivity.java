@@ -59,10 +59,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         try {
             updateDB();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return;
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return;
         }
@@ -73,46 +70,48 @@ public class MainActivity extends AppCompatActivity {
         try {
             String[] posterThumbs = getPosters(sortParam);
             GridView gridView = (GridView) findViewById(R.id.movies_gridview);
-            gridView.setAdapter(new ImageAdapter(this,  posterThumbs));
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v,
-                                        int position, long id) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                    String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
-                    Log.v("fuck", sortParam);
-                    JSONObject movie = null;
-                    String backDropURL = TMDB_IMAGE_BASE_URL + TMDB_BACKDROP_SIZE_PARAM;
-                    String posterURL = TMDB_IMAGE_BASE_URL + TMDB_POSTER_SIZE_PARAM;
-                    String movieTitle = null;
-                    String plotSynopsis = null;
-                    String rating = null;
-                    String releaseDate = null;
-                    try {
-                        if (sortParam.equals(TMDB_TOP_RATED_PARAM))
-                            movie = TMDB_TOP_RATED.getJSONObject(position);
-                        else
-                            movie = TMDB_POPULAR.getJSONObject(position);
+            if (gridView != null) {
+                gridView.setAdapter(new ImageAdapter(this,  posterThumbs));
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> parent, View v,
+                                            int position, long id) {
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
+                        Log.v("fuck", sortParam);
+                        JSONObject movie;
+                        String backDropURL = TMDB_IMAGE_BASE_URL + TMDB_BACKDROP_SIZE_PARAM;
+                        String posterURL = TMDB_IMAGE_BASE_URL + TMDB_POSTER_SIZE_PARAM;
+                        String movieTitle = null;
+                        String plotSynopsis = null;
+                        String rating = null;
+                        String releaseDate = null;
+                        try {
+                            if (sortParam.equals(TMDB_TOP_RATED_PARAM))
+                                movie = TMDB_TOP_RATED.getJSONObject(position);
+                            else
+                                movie = TMDB_POPULAR.getJSONObject(position);
 
-                        backDropURL += movie.getString(TMDB_JSON_BACKDROP_KEY).substring(1);
-                        posterURL += movie.getString(TMDB_JSON_POSTER_KEY).substring(1);
-                        movieTitle = movie.getString(TMDB_JSON_TITLE_KEY);
-                        plotSynopsis = movie.getString(TMDB_JSON_PLOT_KEY);
-                        rating = movie.getString(TMDB_JSON_RATING_KEY);
-                        releaseDate = movie.getString(TMDB_JSON_RELEASE_DATE_KEY);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                            backDropURL += movie.getString(TMDB_JSON_BACKDROP_KEY).substring(1);
+                            posterURL += movie.getString(TMDB_JSON_POSTER_KEY).substring(1);
+                            movieTitle = movie.getString(TMDB_JSON_TITLE_KEY);
+                            plotSynopsis = movie.getString(TMDB_JSON_PLOT_KEY);
+                            rating = movie.getString(TMDB_JSON_RATING_KEY);
+                            releaseDate = movie.getString(TMDB_JSON_RELEASE_DATE_KEY);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Intent detailIntent = new Intent(v.getContext(), DetailActivity.class);
+                        detailIntent.putExtra("backDropURL", backDropURL);
+                        detailIntent.putExtra("posterURL", posterURL);
+                        detailIntent.putExtra("movieTitle", movieTitle);
+                        detailIntent.putExtra("plotSynopsis", plotSynopsis);
+                        detailIntent.putExtra("rating", rating);
+                        detailIntent.putExtra("releaseDate", releaseDate);
+                        startActivity(detailIntent);
                     }
-
-                    Intent detailIntent = new Intent(v.getContext(), DetailActivity.class);
-                    detailIntent.putExtra("backDropURL", backDropURL);
-                    detailIntent.putExtra("posterURL", posterURL);
-                    detailIntent.putExtra("movieTitle", movieTitle);
-                    detailIntent.putExtra("plotSynopsis", plotSynopsis);
-                    detailIntent.putExtra("rating", rating);
-                    detailIntent.putExtra("releaseDate", releaseDate);
-                    startActivity(detailIntent);
-                }
-            });
+                });
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             if (convertView == null) {
                 // if it's not recycled, initialize some attributes
                 imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, 1024));
+                imageView.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, (int)getResources().getDimension(R.dimen.main_poster_height)));
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {
                 imageView = (ImageView) convertView;
@@ -229,12 +228,12 @@ public class MainActivity extends AppCompatActivity {
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    buffer.append(line + "\n");
+                    buffer.append(line).append("\n");
                 }
                 moviesDB = buffer.toString();
             } catch (ProtocolException e) {
@@ -255,19 +254,16 @@ public class MainActivity extends AppCompatActivity {
                         reader.close();
                     } catch (final IOException e) {
                         e.printStackTrace();
-                        return null;
                     }
                 }
                 try {
                     moviesJsonDB = new JSONObject(moviesDB).getJSONArray(TMDB_JSON_RESULTS_KEY);
 
-                } catch (JSONException e) {
+                } catch (JSONException | NullPointerException e) {
                     e.printStackTrace();
-                } catch (NullPointerException e) {
-                e.printStackTrace();
                 }
-                return moviesJsonDB;
             }
+            return moviesJsonDB;
         }
     }
 }
