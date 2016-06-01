@@ -34,6 +34,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import static android.widget.GridView.AUTO_FIT;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,11 +53,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String TMDB_JSON_PLOT_KEY = "overview";
     public static final String TMDB_JSON_RATING_KEY = "vote_average";
     public static final String TMDB_JSON_RELEASE_DATE_KEY = "release_date";
-    public static int POSTERS_GRID_POSITION;
+
     public static JSONArray TMDB_POPULAR;
     public static JSONArray TMDB_TOP_RATED;
-
-    public static GridView mPostersGrid;
+    public static int GRID_SCROLL_POSITION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!pref.equals(TMDB_TOP_RATED_PARAM)) {
                     editor.putString(getString(R.string.pref_sort_key), TMDB_TOP_RATED_PARAM);
                     editor.apply();
-                    POSTERS_GRID_POSITION = 0;
+                    GRID_SCROLL_POSITION = 0;
                     updateGrid();
                 }
                 return true;
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!pref.equals(TMDB_POPULAR_PARAM)) {
                     editor.putString(getString(R.string.pref_sort_key), TMDB_POPULAR_PARAM);
                     editor.apply();
-                    POSTERS_GRID_POSITION = 0;
+                    GRID_SCROLL_POSITION = 0;
                     updateGrid();
                 }
                 return true;
@@ -118,16 +119,16 @@ public class MainActivity extends AppCompatActivity {
     private void updateGrid() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
+        final GridView mPostersGrid = (GridView)findViewById(R.id.movies_gridview);
         try {
             String[] posterThumbs = getPosters(sortParam);
-            mPostersGrid = (GridView)findViewById(R.id.movies_gridview);
             if (mPostersGrid != null) {
                 mPostersGrid.setAdapter(new ImageAdapter(this,  posterThumbs));
-                mPostersGrid.setSelection(POSTERS_GRID_POSITION);
+                mPostersGrid.setSelection(GRID_SCROLL_POSITION);
                 mPostersGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> parent, View v,
                                             int position, long id) {
-                        POSTERS_GRID_POSITION = mPostersGrid.getFirstVisiblePosition();
+                        GRID_SCROLL_POSITION = mPostersGrid.getFirstVisiblePosition();
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                         String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
                         JSONObject movie;
@@ -229,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
             if (convertView == null) {
                 // if it's not recycled, initialize some attributes
                 imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, (int)getResources().getDimension(R.dimen.main_poster_height)));
+                imageView.setLayoutParams(new GridView.LayoutParams(AUTO_FIT, (int)getResources().getDimension(R.dimen.main_poster_height)));
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {
                 imageView = (ImageView) convertView;
