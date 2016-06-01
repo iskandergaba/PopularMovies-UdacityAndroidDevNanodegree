@@ -4,10 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,10 +16,13 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+
 import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TMDB_API_KEY = "?api_key=fb3915b06d0641541692779f202b518c";
     public static final String TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
     public static final String TMDB_POSTER_SIZE_PARAM = "w500/";
-    public static final String TMDB_BACKDROP_SIZE_PARAM = "w600/";
+    public static final String TMDB_BACKDROP_SIZE_PARAM = "w780/";
     public static final String TMDB_JSON_RESULTS_KEY = "results";
     public static final String TMDB_JSON_POSTER_KEY = "poster_path";
     public static final String TMDB_JSON_BACKDROP_KEY = "backdrop_path";
@@ -49,35 +51,85 @@ public class MainActivity extends AppCompatActivity {
     public static final String TMDB_JSON_PLOT_KEY = "overview";
     public static final String TMDB_JSON_RATING_KEY = "vote_average";
     public static final String TMDB_JSON_RELEASE_DATE_KEY = "release_date";
-    public static JSONArray TMDB_POPULAR = null;
-    public static JSONArray TMDB_TOP_RATED = null;
+    public static int POSTERS_GRID_POSITION;
+    public static JSONArray TMDB_POPULAR;
+    public static JSONArray TMDB_TOP_RATED;
+
+    public static GridView mPostersGrid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        openOptionsMenu();
         setContentView(R.layout.activity_main);
         try {
-            updateDB();
+            if (TMDB_POPULAR == null || TMDB_TOP_RATED == null) {
+                updateDB();
+            }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return;
         }
 
+        updateGrid();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String pref = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
+        SharedPreferences.Editor editor = prefs.edit();
+
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+            case R.id.action_sort_top_rated:
+                if (!pref.equals(TMDB_TOP_RATED_PARAM)) {
+                    editor.putString(getString(R.string.pref_sort_key), TMDB_TOP_RATED_PARAM);
+                    editor.apply();
+                    POSTERS_GRID_POSITION = 0;
+                    updateGrid();
+                }
+                return true;
+
+            case R.id.action_sort_popular:
+                if (!pref.equals(TMDB_POPULAR_PARAM)) {
+                    editor.putString(getString(R.string.pref_sort_key), TMDB_POPULAR_PARAM);
+                    editor.apply();
+                    POSTERS_GRID_POSITION = 0;
+                    updateGrid();
+                }
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateGrid() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
-
         try {
             String[] posterThumbs = getPosters(sortParam);
-            GridView gridView = (GridView) findViewById(R.id.movies_gridview);
-            if (gridView != null) {
-                gridView.setAdapter(new ImageAdapter(this,  posterThumbs));
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            mPostersGrid = (GridView)findViewById(R.id.movies_gridview);
+            if (mPostersGrid != null) {
+                mPostersGrid.setAdapter(new ImageAdapter(this,  posterThumbs));
+                mPostersGrid.setSelection(POSTERS_GRID_POSITION);
+                mPostersGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> parent, View v,
                                             int position, long id) {
+                        POSTERS_GRID_POSITION = mPostersGrid.getFirstVisiblePosition();
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                         String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
-                        Log.v("fuck", sortParam);
                         JSONObject movie;
                         String backDropURL = TMDB_IMAGE_BASE_URL + TMDB_BACKDROP_SIZE_PARAM;
                         String posterURL = TMDB_IMAGE_BASE_URL + TMDB_POSTER_SIZE_PARAM;
@@ -114,26 +166,6 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                startActivity(settingsIntent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -221,9 +253,9 @@ public class MainActivity extends AppCompatActivity {
             JSONArray moviesJsonDB = null;
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-            String genreParam = params[0];
+            String sortParam = params[0];
             try {
-                URL url = new URL(TMDB_MOVIE_BASE_URL + genreParam + TMDB_API_KEY);
+                URL url = new URL(TMDB_MOVIE_BASE_URL + sortParam + TMDB_API_KEY);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -246,9 +278,9 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 return null;
             } finally {
-                if (urlConnection != null) {
+                if (urlConnection != null)
                     urlConnection.disconnect();
-                }
+
                 if (reader != null) {
                     try {
                         reader.close();
@@ -256,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+
                 try {
                     moviesJsonDB = new JSONObject(moviesDB).getJSONArray(TMDB_JSON_RESULTS_KEY);
 

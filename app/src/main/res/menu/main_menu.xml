@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_settings"
-        android:title="Settings"/>
+        android:title="@string/action_settings"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/action_sort"
+        android:title="@string/action_sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/action_sort_popular"
+                android:title="@string/action_sort_by_popular" />
+            <item
+                android:id="@+id/action_sort_top_rated"
+                android:title="@string/action_sort_by_top_rated" />
+        </menu>
+    </item>
 
 </menu>

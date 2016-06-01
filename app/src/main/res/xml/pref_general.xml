@@ -6,6 +6,6 @@
         android:entries="@array/sort_by_list_entries"
         android:entryValues="@array/sort_by_list_values"
         android:defaultValue="@string/pref_sort_default_value"
-        android:persistent="true" />
+        android:persistent="true"/>
 
 </PreferenceScreen>
