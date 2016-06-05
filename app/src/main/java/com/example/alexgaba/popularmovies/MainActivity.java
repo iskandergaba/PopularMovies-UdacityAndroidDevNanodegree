@@ -13,9 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import com.squareup.picasso.Picasso;
 
@@ -53,10 +55,12 @@ public class MainActivity extends AppCompatActivity {
     public static final String TMDB_JSON_PLOT_KEY = "overview";
     public static final String TMDB_JSON_RATING_KEY = "vote_average";
     public static final String TMDB_JSON_RELEASE_DATE_KEY = "release_date";
+    public static final int SELECT_POPULAR = 0;
+    public static final int SELECT_TOP_RATED = 1;
 
+    public static int GRID_SCROLL_POSITION;
     public static JSONArray TMDB_POPULAR;
     public static JSONArray TMDB_TOP_RATED;
-    public static int GRID_SCROLL_POSITION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,37 +82,58 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+        MenuItem item = menu.findItem(R.id.action_sort);
+        Spinner spinner = (Spinner) item.getActionView();
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getSupportActionBar().getThemedContext(),
+                R.array.action_sort_entries, R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        final String pref = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
+        final SharedPreferences.Editor editor = prefs.edit();
+
+        if (pref.equals(TMDB_TOP_RATED_PARAM)) {
+            spinner.setSelection(SELECT_TOP_RATED);
+        } else if (pref.equals(TMDB_POPULAR_PARAM)) {
+            spinner.setSelection(SELECT_POPULAR);
+        }
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if (position == SELECT_POPULAR) {
+                    if (!pref.equals(TMDB_POPULAR_PARAM)) {
+                        GRID_SCROLL_POSITION = 0;
+                    }
+                    editor.putString(getString(R.string.pref_sort_key), TMDB_POPULAR_PARAM);
+                    editor.apply();
+                    updateGrid();
+                }
+                else if (position == SELECT_TOP_RATED ) {
+                    if (!pref.equals(TMDB_TOP_RATED_PARAM)) {
+                        GRID_SCROLL_POSITION = 0;
+                    }
+                    editor.putString(getString(R.string.pref_sort_key), TMDB_TOP_RATED_PARAM);
+                    editor.apply();
+                    updateGrid();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+
+            }
+        });
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String pref = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
-        SharedPreferences.Editor editor = prefs.edit();
-
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
-                return true;
-            case R.id.action_sort_top_rated:
-                if (!pref.equals(TMDB_TOP_RATED_PARAM)) {
-                    editor.putString(getString(R.string.pref_sort_key), TMDB_TOP_RATED_PARAM);
-                    editor.apply();
-                    GRID_SCROLL_POSITION = 0;
-                    updateGrid();
-                }
-                return true;
-
-            case R.id.action_sort_popular:
-                if (!pref.equals(TMDB_POPULAR_PARAM)) {
-                    editor.putString(getString(R.string.pref_sort_key), TMDB_POPULAR_PARAM);
-                    editor.apply();
-                    GRID_SCROLL_POSITION = 0;
-                    updateGrid();
-                }
                 return true;
 
             default:

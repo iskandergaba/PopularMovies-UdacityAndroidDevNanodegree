@@ -8,13 +8,11 @@
 
     <!-- Strings related to Main Menu -->
     <string name="action_settings">Settings</string>
-    <string name="action_sort">Sort by</string>
-    <string name="action_sort_by_popular">Popular</string>
-    <string name="action_sort_by_top_rated">Top rated</string>
+    <string name="action_sort">Sort</string>
 
     <!-- Strings related to Sorting method to the hidden ListPreference -->
-    <string name="pref_sort_title">Sort by</string>
-    <string name="pref_sort_key">sortBy</string>
+    <string name="pref_sort_title">Sort</string>
+    <string name="pref_sort_key">sort</string>
     <string name="pref_sort_default_value">popular</string>
 
 </resources>
