@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                             posterURL += movie.getString(TMDB_JSON_POSTER_KEY).substring(1);
                             movieTitle = movie.getString(TMDB_JSON_TITLE_KEY);
                             plotSynopsis = movie.getString(TMDB_JSON_PLOT_KEY);
-                            rating = movie.getString(TMDB_JSON_RATING_KEY);
+                            rating = movie.getString(TMDB_JSON_RATING_KEY) + "/10";
                             releaseDate = movie.getString(TMDB_JSON_RELEASE_DATE_KEY);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -198,11 +198,11 @@ public class MainActivity extends AppCompatActivity {
     public String[] getPosters(String sortParam) throws JSONException {
 
         JSONArray moviesDB;
-        if (sortParam.equals(TMDB_TOP_RATED_PARAM))
+        if (sortParam.equals(TMDB_TOP_RATED_PARAM)) {
             moviesDB = TMDB_TOP_RATED;
-
-        else
+        } else {
             moviesDB = TMDB_POPULAR;
+        }
 
         ArrayList<String> urls = new ArrayList<>();
         if (moviesDB != null) {
@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
             Picasso
                     .with(mContext)
                     .load(mThumbIds[position])
+                    .error(R.drawable.error_loading_poster)
                     .into(imageView);
 
             return imageView;

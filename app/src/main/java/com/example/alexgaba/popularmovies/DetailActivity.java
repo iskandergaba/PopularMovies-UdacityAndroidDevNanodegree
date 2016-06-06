@@ -1,14 +1,22 @@
 package com.example.alexgaba.popularmovies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
+
+    private static final String APP_SHARE_HASHTAG = "\n\nShared by #PopularMoviesApp";
+    private String mMovieDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +50,48 @@ public class DetailActivity extends AppCompatActivity {
         if (releaseDateTextView != null)
             releaseDateTextView.setText(releaseDate);
 
+        mMovieDetails = "Movie Title: " + movieTitle + "\n\nPlot Synopsis: " + plotSynopsis + "\n\nRating: " + rating + "\n\nRelease Date: " + releaseDate;
+
         Picasso
                 .with(this)
                 .load(backDropURL)
+                .error(R.drawable.error_loading_backdrop)
                 .into(backDrop);
 
         Picasso
                 .with(this)
                 .load(posterURL)
+                .error(R.drawable.error_loading_poster)
                 .into(poster);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.detail_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                Intent shareMovieIntent = createShareMovieIntent();
+                startActivity(shareMovieIntent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private Intent createShareMovieIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mMovieDetails + APP_SHARE_HASHTAG);
+        return shareIntent;
     }
 
     @Override
@@ -58,5 +99,4 @@ public class DetailActivity extends AppCompatActivity {
         NavUtils.navigateUpFromSameTask(this);
         super.onBackPressed();
     }
-
 }

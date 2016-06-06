@@ -6,13 +6,18 @@
     <string name="subtitle_detail_rating">Rating:</string>
     <string name="subtitle_detail_release_date">Release Date:</string>
 
-    <!-- Strings related to Main Menu -->
+    <!-- Strings related to Menus -->
     <string name="action_settings">Settings</string>
     <string name="action_sort">Sort</string>
+    <string name="action_share">Share</string>
 
     <!-- Strings related to Sorting method to the hidden ListPreference -->
     <string name="pref_sort_title">Sort</string>
     <string name="pref_sort_key">sort</string>
     <string name="pref_sort_default_value">popular</string>
+
+    <!-- Strings related to Image content description -->
+    <string name="image_description_backdrop">The backdrop of the movie</string>
+    <string name="image_description_poster">The poster of the movie</string>
 
 </resources>

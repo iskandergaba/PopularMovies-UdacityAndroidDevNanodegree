@@ -1,36 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.alexgaba.popularmovies.DetailActivity"
-    tools:showIn="@layout/activity_detail">
 
-    <ScrollView
+<ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.example.alexgaba.popularmovies.DetailActivity"
+        tools:showIn="@layout/activity_detail"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/detail_backdrop_height"
-                android:background="@color/colorImageBackground"
+                android:background="@color/colorImageLoadingBackground"
                 android:scaleType="centerCrop"
-                android:id="@+id/detail_backdrop_imageview">
+                android:id="@+id/detail_backdrop_imageview"
+                android:contentDescription="@string/image_description_backdrop">
 
             </ImageView>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true">
+                android:layout_height="wrap_content">
                 <ImageView
+                    android:id="@+id/detail_poster_imageview"
                     android:layout_width="@dimen/detail_poster_width"
                     android:layout_height="@dimen/detail_poster_height"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -38,8 +35,8 @@
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:scaleType="fitXY"
-                    android:background="@color/colorImageBackground"
-                    android:id="@+id/detail_poster_imageview" />
+                    android:background="@color/colorImageLoadingBackground"
+                    android:contentDescription="@string/image_description_poster" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -51,8 +48,8 @@
                     android:textSize="@dimen/detail_title_text_size"
                     android:layout_gravity="center_vertical"
                     android:fontFamily="sans-serif"
-                    android:textColor="@color/colorTitle"
-                    android:id="@+id/detail_title_textview"/>
+                    android:textColor="@color/colorTextDark"
+                    android:id="@+id/detail_title_textview" />
             </LinearLayout>
 
             <TextView
@@ -71,7 +68,7 @@
                 android:paddingLeft="@dimen/activity_vertical_margin"
                 android:paddingRight="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_horizontal_spacing"
-                android:textColor="@color/colorDescription"
+                android:textColor="@color/colorTextDark"
                 android:text="Plot description"/>
 
             <LinearLayout
@@ -94,8 +91,8 @@
                     android:paddingLeft="@dimen/activity_vertical_spacing"
                     android:paddingRight="@dimen/activity_vertical_spacing"
                     android:paddingBottom="@dimen/activity_horizontal_spacing"
-                    android:textColor="@color/colorDescription"
-                    android:text="10"/>
+                    android:textColor="@color/colorTextDark"
+                    android:text="10/10"/>
             </LinearLayout>
 
             <LinearLayout
@@ -118,11 +115,10 @@
                     android:paddingLeft="@dimen/activity_vertical_spacing"
                     android:paddingRight="@dimen/activity_vertical_spacing"
                     android:paddingBottom="@dimen/activity_horizontal_spacing"
-                    android:textColor="@color/colorDescription"
+                    android:textColor="@color/colorTextDark"
                     android:text="29-05-2016"/>
             </LinearLayout>
+
         </LinearLayout>
 
-    </ScrollView>
-
-</LinearLayout>
+</ScrollView>

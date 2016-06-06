@@ -3,7 +3,6 @@
     <color name="colorPrimary">#0277bd</color>
     <color name="colorPrimaryDark">#01579b</color>
     <color name="colorAccent">#00bcd4</color>
-    <color name="colorTitle">#000000</color>
-    <color name="colorDescription">#000000</color>
-    <color name="colorImageBackground">#000000</color>
+    <color name="colorTextDark">#000000</color>
+    <color name="colorImageLoadingBackground">#000000</color>
 </resources>
