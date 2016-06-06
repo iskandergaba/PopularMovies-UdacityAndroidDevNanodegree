@@ -1,8 +1,9 @@
 package com.example.alexgaba.popularmovies;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -78,7 +79,9 @@ public class DetailActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_share:
-                Intent shareMovieIntent = createShareMovieIntent();
+                Intent shareMovieIntent = new Intent(Intent.ACTION_SEND);
+                shareMovieIntent.setType("text/plain");
+                shareMovieIntent.putExtra(Intent.EXTRA_TEXT, mMovieDetails + APP_SHARE_HASHTAG);
                 startActivity(shareMovieIntent);
                 return true;
 
@@ -87,16 +90,9 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    private Intent createShareMovieIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mMovieDetails + APP_SHARE_HASHTAG);
-        return shareIntent;
-    }
-
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
-        super.onBackPressed();
+    public Intent getParentActivityIntent() {
+        return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     }
 }
