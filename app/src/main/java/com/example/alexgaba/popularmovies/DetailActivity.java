@@ -14,15 +14,16 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
-import java.util.HashSet;
-import java.util.Set;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.util.ArrayList;
 
 public class DetailActivity extends AppCompatActivity {
 
     private static final String APP_SHARE_HASHTAG = "\n\nShared by #PopularMoviesApp";
+    private JSONObject mMovie = null;
     private String mMovieDetails;
 
     @Override
@@ -33,12 +34,31 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        String backDropURL = getIntent().getExtras().getString("backDropURL");
-        String posterURL = getIntent().getStringExtra("posterURL");
-        String movieTitle = getIntent().getExtras().getString("movieTitle");
-        String plotSynopsis = getIntent().getExtras().getString("plotSynopsis");
-        String rating = getIntent().getExtras().getString("rating");
-        String releaseDate = getIntent().getExtras().getString("releaseDate");
+
+        try {
+            mMovie = new JSONObject(getIntent().getExtras().getString("movie"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String backDropURL = MainActivity.TMDB_IMAGE_BASE_URL + MainActivity.TMDB_BACKDROP_SIZE_PARAM;
+        String posterURL = MainActivity.TMDB_IMAGE_BASE_URL + MainActivity.TMDB_POSTER_SIZE_PARAM;
+        String movieTitle = null;
+        String plotSynopsis = null;
+        String rating = null;
+        String releaseDate = null;
+        String Id = null;
+        try {
+            backDropURL += mMovie.getString(MainActivity.TMDB_JSON_BACKDROP_KEY).substring(1);
+            posterURL += mMovie.getString(MainActivity.TMDB_JSON_POSTER_KEY).substring(1);
+            movieTitle = mMovie.getString(MainActivity.TMDB_JSON_TITLE_KEY);
+            plotSynopsis = mMovie.getString(MainActivity.TMDB_JSON_PLOT_KEY);
+            rating = mMovie.getString(MainActivity.TMDB_JSON_RATING_KEY) + "/10";
+            releaseDate = mMovie.getString(MainActivity.TMDB_JSON_RELEASE_DATE_KEY);
+            Id = mMovie.getString(MainActivity.TMDB_JSON_ID_KEY);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         ImageView poster = (ImageView)findViewById(R.id.detail_poster_imageview);
         ImageView backDrop = (ImageView)findViewById(R.id.detail_backdrop_imageview);
         TextView movieTitleTextView = (TextView)findViewById(R.id.detail_title_textview);
@@ -78,7 +98,11 @@ public class DetailActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.detail_menu, menu);
         MenuItem favorite = menu.getItem(0);
-        updateFavoriteMenuItem(favorite);
+        try {
+            updateFavoriteMenuItem(favorite);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -94,12 +118,16 @@ public class DetailActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_favorite:
-                if (isFavorite()) {
-                    removeFavorite();
-                } else {
-                    addFavorite();
+                try {
+                    if (isFavorite()) {
+                        removeFavorite();
+                    } else {
+                        addFavorite();
+                    }
+                    updateFavoriteMenuItem(item);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                updateFavoriteMenuItem(item);
                 return true;
 
             default:
@@ -113,44 +141,68 @@ public class DetailActivity extends AppCompatActivity {
         return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     }
 
-    private boolean isFavorite() {
-        String Id = getIntent().getExtras().getString("Id");
+    private boolean isFavorite() throws JSONException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Set<String> favorite = new HashSet<>(prefs.getStringSet(MainActivity.FAVORITE_KEY, new HashSet<String>()));
-        return favorite.contains(Id);
+        JSONArray favorite = new JSONArray(prefs.getString(MainActivity.TMDB_FAVORITE_PARAM, new JSONArray().toString()));
+        for (int i = 0; i < favorite.length(); i++) {
+            JSONObject fMovie = favorite.getJSONObject(i);
+            if (fMovie.toString().equals(mMovie.toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private void addFavorite() {
-        String Id = getIntent().getExtras().getString("Id");
+    private void addFavorite() throws JSONException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Set<String> favorite = new HashSet<>(prefs.getStringSet(MainActivity.FAVORITE_KEY, new HashSet<String>()));
+        JSONArray favorite = new JSONArray(prefs.getString(MainActivity.TMDB_FAVORITE_PARAM, new JSONArray().toString()));
+        ArrayList<JSONObject> fList = new ArrayList<>();
+
+        for (int i = 0; i < favorite.length(); i++){
+            fList.add(favorite.getJSONObject(i));
+        }
+        fList.add(mMovie);
+        favorite = new JSONArray(fList);
+
         SharedPreferences.Editor editor = prefs.edit();
-        favorite.add(Id);
-        editor.putStringSet(MainActivity.FAVORITE_KEY, favorite);
+        editor.putString(MainActivity.TMDB_FAVORITE_PARAM, favorite.toString());
         editor.apply();
 
-        CharSequence text = "\"" + getIntent().getStringExtra("movieTitle") + "\"" +
+        CharSequence text = "\"" + mMovie.getString(MainActivity.TMDB_JSON_TITLE_KEY) + "\"" +
                 " has been added to favorite";
         Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
         toast.show();
     }
 
-    private void removeFavorite() {
-        String Id = getIntent().getExtras().getString("Id");
+    private void removeFavorite() throws JSONException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Set<String> favorite = new HashSet<>(prefs.getStringSet(MainActivity.FAVORITE_KEY, new HashSet<String>()));
+        JSONArray favorite = new JSONArray(prefs.getString(MainActivity.TMDB_FAVORITE_PARAM, new JSONArray().toString()));
+        ArrayList<JSONObject> fList = new ArrayList<>();
+
+        for (int i = 0; i < favorite.length(); i++){
+            fList.add(favorite.getJSONObject(i));
+        }
+
+        for (int i = 0; i < fList.size(); i++) {
+            JSONObject fMovie = favorite.getJSONObject(i);
+            if (fMovie.toString().equals(mMovie.toString())) {
+                fList.remove(i);
+                break;
+            }
+        }
+
+        favorite = new JSONArray(fList);
         SharedPreferences.Editor editor = prefs.edit();
-        favorite.remove(Id);
-        editor.putStringSet(MainActivity.FAVORITE_KEY, favorite);
+        editor.putString(MainActivity.TMDB_FAVORITE_PARAM, favorite.toString());
         editor.apply();
 
-        CharSequence text = "\"" + getIntent().getStringExtra("movieTitle") + "\"" +
+        CharSequence text = "\"" + mMovie.getString(MainActivity.TMDB_JSON_TITLE_KEY) + "\"" +
                 " has been removed from favorite";
         Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
         toast.show();
     }
 
-    private void updateFavoriteMenuItem(MenuItem item) {
+    private void updateFavoriteMenuItem(MenuItem item) throws JSONException {
         if (isFavorite()) {
             item.setIcon(R.drawable.action_favorite_on);
             item.setTitle(R.string.action_remove_favorite);
