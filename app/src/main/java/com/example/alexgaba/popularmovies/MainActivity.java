@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import static android.widget.GridView.AUTO_FIT;
@@ -55,19 +57,30 @@ public class MainActivity extends AppCompatActivity {
     public static final String TMDB_JSON_PLOT_KEY = "overview";
     public static final String TMDB_JSON_RATING_KEY = "vote_average";
     public static final String TMDB_JSON_RELEASE_DATE_KEY = "release_date";
+    public static final String TMDB_JSON_ID_KEY = "id";
+    public static final String SCROLL_POSITION_KEY = "scroll_pos";
+    public static final String FAVORITE_KEY = "favorites";
+
     public static final int SELECT_POPULAR = 0;
     public static final int SELECT_TOP_RATED = 1;
+    public static final int SELECT_FAVORITE = 2;
+    public static final Set<String> DEFAULT_FAVORITE = null;
 
-    public static int GRID_SCROLL_POSITION;
-    public static JSONArray TMDB_POPULAR;
-    public static JSONArray TMDB_TOP_RATED;
+    public static int mScrollPosition;
+    public static GridView mPostersGrid;
+    public static JSONArray mPopularJSONData;
+    public static JSONArray mTopRatedJSONData;
+    public static Set<String> mFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (savedInstanceState != null && savedInstanceState.containsKey("pos")) {
+            mScrollPosition = savedInstanceState.getInt(SCROLL_POSITION_KEY);
+        }
         try {
-            if (TMDB_POPULAR == null || TMDB_TOP_RATED == null) {
+            if (mPopularJSONData == null || mTopRatedJSONData == null) {
                 updateDB();
             }
         } catch (ExecutionException | InterruptedException e) {
@@ -77,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
         updateGrid();
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (position == SELECT_POPULAR) {
                     if (!pref.equals(TMDB_POPULAR_PARAM)) {
-                        GRID_SCROLL_POSITION = 0;
+                        mScrollPosition = 0;
                     }
                     editor.putString(getString(R.string.pref_sort_key), TMDB_POPULAR_PARAM);
                     editor.apply();
@@ -111,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if (position == SELECT_TOP_RATED ) {
                     if (!pref.equals(TMDB_TOP_RATED_PARAM)) {
-                        GRID_SCROLL_POSITION = 0;
+                        mScrollPosition = 0;
                     }
                     editor.putString(getString(R.string.pref_sort_key), TMDB_TOP_RATED_PARAM);
                     editor.apply();
@@ -141,19 +156,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SCROLL_POSITION_KEY, mPostersGrid.getFirstVisiblePosition());
+        super.onSaveInstanceState(outState);
+    }
+
     private void updateGrid() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
-        final GridView mPostersGrid = (GridView)findViewById(R.id.movies_gridview);
+        mPostersGrid = (GridView)findViewById(R.id.movies_gridview);
         try {
             String[] posterThumbs = getPosters(sortParam);
             if (mPostersGrid != null) {
                 mPostersGrid.setAdapter(new ImageAdapter(this,  posterThumbs));
-                mPostersGrid.setSelection(GRID_SCROLL_POSITION);
+                mPostersGrid.setSelection(mScrollPosition);
                 mPostersGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> parent, View v,
                                             int position, long id) {
-                        GRID_SCROLL_POSITION = mPostersGrid.getFirstVisiblePosition();
+                        mScrollPosition = mPostersGrid.getFirstVisiblePosition();
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                         String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
                         JSONObject movie;
@@ -163,11 +184,12 @@ public class MainActivity extends AppCompatActivity {
                         String plotSynopsis = null;
                         String rating = null;
                         String releaseDate = null;
+                        String Id = null;
                         try {
                             if (sortParam.equals(TMDB_TOP_RATED_PARAM))
-                                movie = TMDB_TOP_RATED.getJSONObject(position);
+                                movie = mTopRatedJSONData.getJSONObject(position);
                             else
-                                movie = TMDB_POPULAR.getJSONObject(position);
+                                movie = mPopularJSONData.getJSONObject(position);
 
                             backDropURL += movie.getString(TMDB_JSON_BACKDROP_KEY).substring(1);
                             posterURL += movie.getString(TMDB_JSON_POSTER_KEY).substring(1);
@@ -175,6 +197,8 @@ public class MainActivity extends AppCompatActivity {
                             plotSynopsis = movie.getString(TMDB_JSON_PLOT_KEY);
                             rating = movie.getString(TMDB_JSON_RATING_KEY) + "/10";
                             releaseDate = movie.getString(TMDB_JSON_RELEASE_DATE_KEY);
+                            Id = movie.getString(TMDB_JSON_ID_KEY);
+                            Log.v("movieid", Id);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -186,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
                         detailIntent.putExtra("plotSynopsis", plotSynopsis);
                         detailIntent.putExtra("rating", rating);
                         detailIntent.putExtra("releaseDate", releaseDate);
+                        detailIntent.putExtra("Id", Id);
                         startActivity(detailIntent);
                     }
                 });
@@ -199,9 +224,9 @@ public class MainActivity extends AppCompatActivity {
 
         JSONArray moviesDB;
         if (sortParam.equals(TMDB_TOP_RATED_PARAM)) {
-            moviesDB = TMDB_TOP_RATED;
+            moviesDB = mTopRatedJSONData;
         } else {
-            moviesDB = TMDB_POPULAR;
+            moviesDB = mPopularJSONData;
         }
 
         ArrayList<String> urls = new ArrayList<>();
@@ -218,8 +243,8 @@ public class MainActivity extends AppCompatActivity {
     private void updateDB() throws ExecutionException, InterruptedException {
         FetchMoviesTask popularMoviesTask = new FetchMoviesTask();
         FetchMoviesTask topMoviesTask = new FetchMoviesTask();
-        TMDB_POPULAR = popularMoviesTask.execute(TMDB_POPULAR_PARAM).get();
-        TMDB_TOP_RATED = topMoviesTask.execute(TMDB_TOP_RATED_PARAM).get();
+        mPopularJSONData = popularMoviesTask.execute(TMDB_POPULAR_PARAM).get();
+        mTopRatedJSONData = topMoviesTask.execute(TMDB_TOP_RATED_PARAM).get();
     }
 
     public class ImageAdapter extends BaseAdapter {

@@ -3,15 +3,18 @@
     <string-array name="sort_list_entries">
         <item>Most Popular</item>
         <item>Top Rated</item>
+        <item>Favorite</item>
     </string-array>
 
     <string-array name="sort_list_values">
         <item>popular</item>
         <item>top_rated</item>
+        <item>favorite</item>
     </string-array>
 
     <string-array name="action_sort_entries">
         <item>Most Popular</item>
         <item>Top Rated</item>
+        <item>Favorite</item>
     </string-array>
 </resources>
