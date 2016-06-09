@@ -10,116 +10,153 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/detail_backdrop_height"
+            android:background="@color/colorImageLoadingBackground"
+            android:scaleType="centerCrop"
+            android:id="@+id/detail_backdrop_imageview"
+            android:contentDescription="@string/image_description_backdrop">
+
+        </ImageView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/detail_poster_imageview"
+                android:layout_width="@dimen/detail_poster_width"
+                android:layout_height="@dimen/detail_poster_height"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:scaleType="fitXY"
+                android:background="@color/colorImageLoadingBackground"
+                android:contentDescription="@string/image_description_poster" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_spacing"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Popular Movie Title"
+                android:textSize="@dimen/detail_title_text_size"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/colorTextDark"
+                android:id="@+id/detail_title_textview" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/subtitle_detail_plot_synopsis"
+            android:textSize="@dimen/detail_subtitle_text_size"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_horizontal_spacing"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/detail_plot_textview"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_horizontal_spacing"
+            android:textColor="@color/colorTextDark"
+            android:text="Plot description"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/detail_backdrop_height"
-                android:background="@color/colorImageLoadingBackground"
-                android:scaleType="centerCrop"
-                android:id="@+id/detail_backdrop_imageview"
-                android:contentDescription="@string/image_description_backdrop">
-
-            </ImageView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/detail_poster_imageview"
-                    android:layout_width="@dimen/detail_poster_width"
-                    android:layout_height="@dimen/detail_poster_height"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:scaleType="fitXY"
-                    android:background="@color/colorImageLoadingBackground"
-                    android:contentDescription="@string/image_description_poster" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_spacing"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Popular Movie Title"
-                    android:textSize="@dimen/detail_title_text_size"
-                    android:layout_gravity="center_vertical"
-                    android:fontFamily="sans-serif"
-                    android:textColor="@color/colorTextDark"
-                    android:id="@+id/detail_title_textview" />
-            </LinearLayout>
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_horizontal_spacing">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/subtitle_detail_plot_synopsis"
+                android:text="@string/subtitle_detail_rating"
                 android:textSize="@dimen/detail_subtitle_text_size"
-                android:paddingLeft="@dimen/activity_vertical_margin"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_horizontal_spacing"
                 android:textStyle="bold"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/detail_plot_textview"
-                android:paddingLeft="@dimen/activity_vertical_margin"
-                android:paddingRight="@dimen/activity_vertical_margin"
+                android:id="@+id/detail_rating_textview"
+                android:paddingLeft="@dimen/activity_vertical_spacing"
+                android:paddingRight="@dimen/activity_vertical_spacing"
                 android:paddingBottom="@dimen/activity_horizontal_spacing"
                 android:textColor="@color/colorTextDark"
-                android:text="Plot description"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_vertical_margin"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_horizontal_spacing">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/subtitle_detail_rating"
-                    android:textSize="@dimen/detail_subtitle_text_size"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/detail_rating_textview"
-                    android:paddingLeft="@dimen/activity_vertical_spacing"
-                    android:paddingRight="@dimen/activity_vertical_spacing"
-                    android:paddingBottom="@dimen/activity_horizontal_spacing"
-                    android:textColor="@color/colorTextDark"
-                    android:text="10/10"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_vertical_margin"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_horizontal_spacing">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/subtitle_detail_release_date"
-                    android:textSize="@dimen/detail_subtitle_text_size"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/detail_release_date_textview"
-                    android:paddingLeft="@dimen/activity_vertical_spacing"
-                    android:paddingRight="@dimen/activity_vertical_spacing"
-                    android:paddingBottom="@dimen/activity_horizontal_spacing"
-                    android:textColor="@color/colorTextDark"
-                    android:text="29-05-2016"/>
-            </LinearLayout>
-
+                android:text="10/10"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_horizontal_spacing">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/subtitle_detail_release_date"
+                android:textSize="@dimen/detail_subtitle_text_size"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/detail_release_date_textview"
+                android:paddingLeft="@dimen/activity_vertical_spacing"
+                android:paddingRight="@dimen/activity_vertical_spacing"
+                android:paddingBottom="@dimen/activity_horizontal_spacing"
+                android:textColor="@color/colorTextDark"
+                android:text="29-05-2016"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/trailers_title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trailers (1)"
+            android:textSize="@dimen/detail_subtitle_text_size"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_horizontal_spacing"
+            android:textStyle="bold"/>
+
+        <ListView
+            android:id="@+id/trailers_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/movie_data_list_view_item"
+            android:clickable="true">
+        </ListView>
+
+        <TextView
+            android:id="@+id/reviews_title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reviews (1)"
+            android:textSize="@dimen/detail_subtitle_text_size"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_horizontal_spacing"
+            android:textStyle="bold"/>
+
+        <ListView
+            android:id="@+id/reviews_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/movie_data_list_view_item"
+            android:clickable="true">
+        </ListView>
+
+    </LinearLayout>
 </ScrollView>
