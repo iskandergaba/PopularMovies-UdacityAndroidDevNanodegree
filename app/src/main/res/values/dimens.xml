@@ -11,5 +11,6 @@
 
     <dimen name="detail_title_text_size">24sp</dimen>
     <dimen name="detail_subtitle_text_size">15sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

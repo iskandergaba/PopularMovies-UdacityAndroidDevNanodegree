@@ -35,8 +35,9 @@
                 android:value="com.example.alexgaba.popularmovies.MainActivity" />
         </activity>
 
-        <service android:name=".Services.MoviesService"/>
-        <service android:name=".Services.MoviesDataService"/>
+        <service android:name=".Services.MoviesService" />
+        <service android:name=".Services.MoviesDataService" />
+
     </application>
 
 </manifest>

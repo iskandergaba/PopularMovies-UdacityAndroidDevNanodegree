@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.example.alexgaba.popularmovies.MainActivity;
+import com.example.alexgaba.popularmovies.MoviesFragment;
 import com.example.alexgaba.popularmovies.Utility;
 
 import org.json.JSONException;
@@ -26,87 +26,86 @@ public class MoviesDataService extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         try {
-            for (int i = 0; i < MainActivity.mPopularJSONData.length(); i++) {
-                String id = MainActivity.mPopularJSONData.getJSONObject(i).getString(MainActivity.TMDB_JSON_ID_KEY);
-                if (!Utility.isMovieExisting(id, MainActivity.mTrailersJSONData)) {
+            for (int i = 0; i < MoviesFragment.mPopularJSONData.length(); i++) {
+                String id = MoviesFragment.mPopularJSONData.getJSONObject(i).getString(MoviesFragment.TMDB_JSON_ID_KEY);
+                if (!Utility.isMovieExisting(id, MoviesFragment.mTrailersJSONData)) {
                     JSONObject trailersJSON = getMovieTrailers(id);
                     if (trailersJSON != null) {
-                        MainActivity.mTrailersJSONData = Utility.JsonAddObjectToArray(MainActivity.mTrailersJSONData, trailersJSON);
+                        MoviesFragment.mTrailersJSONData = Utility.JsonAddObjectToArray(MoviesFragment.mTrailersJSONData, trailersJSON);
                     }
                 }
 
-                if (!Utility.isMovieExisting(id, MainActivity.mReviewsJSONData)) {
+                if (!Utility.isMovieExisting(id, MoviesFragment.mReviewsJSONData)) {
                     JSONObject reviewsJSON = getMovieReviews(id);
                     if (reviewsJSON != null) {
-                        MainActivity.mReviewsJSONData = Utility.JsonAddObjectToArray(MainActivity.mReviewsJSONData, reviewsJSON);
+                        MoviesFragment.mReviewsJSONData = Utility.JsonAddObjectToArray(MoviesFragment.mReviewsJSONData, reviewsJSON);
                     }
                 }
             }
 
-            for (int i = 0; i < MainActivity.mTopRatedJSONData.length(); i++) {
-                String id = MainActivity.mTopRatedJSONData.getJSONObject(i).getString(MainActivity.TMDB_JSON_ID_KEY);
-                if (!Utility.isMovieExisting(id, MainActivity.mTrailersJSONData)) {
+            for (int i = 0; i < MoviesFragment.mTopRatedJSONData.length(); i++) {
+                String id = MoviesFragment.mTopRatedJSONData.getJSONObject(i).getString(MoviesFragment.TMDB_JSON_ID_KEY);
+                if (!Utility.isMovieExisting(id, MoviesFragment.mTrailersJSONData)) {
                     JSONObject trailersJSON = getMovieTrailers(id);
                     if (trailersJSON != null) {
-                        MainActivity.mTrailersJSONData = Utility.JsonAddObjectToArray(MainActivity.mTrailersJSONData, trailersJSON);
+                        MoviesFragment.mTrailersJSONData = Utility.JsonAddObjectToArray(MoviesFragment.mTrailersJSONData, trailersJSON);
                     }
                 }
 
-                if (!Utility.isMovieExisting(id, MainActivity.mReviewsJSONData)) {
+                if (!Utility.isMovieExisting(id, MoviesFragment.mReviewsJSONData)) {
                     JSONObject reviewsJSON = getMovieReviews(id);
                     if (reviewsJSON != null) {
-                        MainActivity.mReviewsJSONData = Utility.JsonAddObjectToArray(MainActivity.mReviewsJSONData, reviewsJSON);
+                        MoviesFragment.mReviewsJSONData = Utility.JsonAddObjectToArray(MoviesFragment.mReviewsJSONData, reviewsJSON);
                     }
                 }
             }
 
-            for (int i = 0; i < MainActivity.mFavoriteJSONData.length(); i++) {
-                String id = MainActivity.mFavoriteJSONData.getJSONObject(i).getString(MainActivity.TMDB_JSON_ID_KEY);
-                if (!Utility.isMovieExisting(id, MainActivity.mTrailersJSONData)) {
+            for (int i = 0; i < MoviesFragment.mFavoriteJSONData.length(); i++) {
+                String id = MoviesFragment.mFavoriteJSONData.getJSONObject(i).getString(MoviesFragment.TMDB_JSON_ID_KEY);
+                if (!Utility.isMovieExisting(id, MoviesFragment.mTrailersJSONData)) {
                     JSONObject trailersJSON = getMovieTrailers(id);
                     if (trailersJSON != null) {
-                        MainActivity.mTrailersJSONData = Utility.JsonAddObjectToArray(MainActivity.mTrailersJSONData, trailersJSON);
+                        MoviesFragment.mTrailersJSONData = Utility.JsonAddObjectToArray(MoviesFragment.mTrailersJSONData, trailersJSON);
                     }
                 }
 
-                if (!Utility.isMovieExisting(id, MainActivity.mReviewsJSONData)) {
+                if (!Utility.isMovieExisting(id, MoviesFragment.mReviewsJSONData)) {
                     JSONObject reviewsJSON = getMovieReviews(id);
                     if (reviewsJSON != null) {
-                        MainActivity.mReviewsJSONData = Utility.JsonAddObjectToArray(MainActivity.mReviewsJSONData, reviewsJSON);
+                        MoviesFragment.mReviewsJSONData = Utility.JsonAddObjectToArray(MoviesFragment.mReviewsJSONData, reviewsJSON);
                     }
                 }
             }
 
-            for (int i = 0; i < MainActivity.mReviewsJSONData.length(); i++) {
-                JSONObject movie = MainActivity.mReviewsJSONData.getJSONObject(i);
-                String id = movie.getString(MainActivity.TMDB_JSON_ID_KEY);
-                if (!Utility.isMovieExisting(id, MainActivity.mPopularJSONData) &&
-                        !Utility.isMovieExisting(id, MainActivity.mTopRatedJSONData) &&
-                        !Utility.isMovieExisting(id, MainActivity.mFavoriteJSONData)) {
-                    MainActivity.mReviewsJSONData = Utility.JsonRemoveObjectFromArray(MainActivity.mReviewsJSONData, movie);
+            for (int i = 0; i < MoviesFragment.mReviewsJSONData.length(); i++) {
+                JSONObject movie = MoviesFragment.mReviewsJSONData.getJSONObject(i);
+                String id = movie.getString(MoviesFragment.TMDB_JSON_ID_KEY);
+                if (!Utility.isMovieExisting(id, MoviesFragment.mPopularJSONData) &&
+                        !Utility.isMovieExisting(id, MoviesFragment.mTopRatedJSONData) &&
+                        !Utility.isMovieExisting(id, MoviesFragment.mFavoriteJSONData)) {
+                    MoviesFragment.mReviewsJSONData = Utility.JsonRemoveObjectFromArray(MoviesFragment.mReviewsJSONData, movie);
                 }
             }
 
-            for (int i = 0; i < MainActivity.mTrailersJSONData.length(); i++) {
-                JSONObject movie = MainActivity.mTrailersJSONData.getJSONObject(i);
-                String id = movie.getString(MainActivity.TMDB_JSON_ID_KEY);
-                if (!Utility.isMovieExisting(id, MainActivity.mPopularJSONData) &&
-                        !Utility.isMovieExisting(id, MainActivity.mTopRatedJSONData) &&
-                        !Utility.isMovieExisting(id, MainActivity.mFavoriteJSONData)) {
-                    MainActivity.mTrailersJSONData = Utility.JsonRemoveObjectFromArray(MainActivity.mTrailersJSONData, movie);
+            for (int i = 0; i < MoviesFragment.mTrailersJSONData.length(); i++) {
+                JSONObject movie = MoviesFragment.mTrailersJSONData.getJSONObject(i);
+                String id = movie.getString(MoviesFragment.TMDB_JSON_ID_KEY);
+                if (!Utility.isMovieExisting(id, MoviesFragment.mPopularJSONData) &&
+                        !Utility.isMovieExisting(id, MoviesFragment.mTopRatedJSONData) &&
+                        !Utility.isMovieExisting(id, MoviesFragment.mFavoriteJSONData)) {
+                    MoviesFragment.mTrailersJSONData = Utility.JsonRemoveObjectFromArray(MoviesFragment.mTrailersJSONData, movie);
                 }
             }
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(MainActivity.TMDB_TRAILERS_PARAM, MainActivity.mTrailersJSONData.toString());
-            editor.putString(MainActivity.TMDB_REVIEWS_PARAM, MainActivity.mReviewsJSONData.toString());
+            editor.putString(MoviesFragment.TMDB_TRAILERS_PARAM, MoviesFragment.mTrailersJSONData.toString());
+            editor.putString(MoviesFragment.TMDB_REVIEWS_PARAM, MoviesFragment.mReviewsJSONData.toString());
             editor.apply();
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     private JSONObject getMovieTrailers(String id) {
@@ -114,7 +113,7 @@ public class MoviesDataService extends IntentService {
         JSONObject movieJSONData = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-        String dataType  = MainActivity.TMDB_TRAILERS_PARAM;
+        String dataType  = MoviesFragment.TMDB_TRAILERS_PARAM;
         try {
             URL url = new URL(MoviesService.TMDB_MOVIE_BASE_URL + id + "/" + dataType + MoviesService.TMDB_API_KEY);
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -159,7 +158,7 @@ public class MoviesDataService extends IntentService {
         JSONObject movieJSONData = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-        String dataType  = MainActivity.TMDB_REVIEWS_PARAM;
+        String dataType  = MoviesFragment.TMDB_REVIEWS_PARAM;
         try {
             URL url = new URL(MoviesService.TMDB_MOVIE_BASE_URL + id + "/" + dataType + MoviesService.TMDB_API_KEY);
             urlConnection = (HttpURLConnection) url.openConnection();

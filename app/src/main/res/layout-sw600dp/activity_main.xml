@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal"
+    android:orientation="horizontal"
+    tools:context="com.example.alexgaba.popularmovies.MainActivity">
+
+    <!--
+    This layout is a two-pane layout for the Items master/detail flow.
+    -->
+    <fragment
+    android:name="com.example.alexgaba.popularmovies.MainActivity"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="6"
+    tools:layout="@layout/fragment_movies"
+    android:id="@+id/main_container" />
+
+    <fragment
+        android:name="com.example.alexgaba.popularmovies.DetailFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_detail"
+        android:layout_weight="8" />
+
+</LinearLayout>

@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.example.alexgaba.popularmovies.BuildConfig;
-import com.example.alexgaba.popularmovies.MainActivity;
+import com.example.alexgaba.popularmovies.MoviesFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,8 +32,8 @@ public class MoviesService extends IntentService{
     @Override
     protected void onHandleIntent(Intent intent) {
         ArrayList<String> sortParams = new ArrayList<>();
-        sortParams.add(MainActivity.TMDB_POPULAR_PARAM);
-        sortParams.add(MainActivity.TMDB_TOP_RATED_PARAM);
+        sortParams.add(MoviesFragment.TMDB_POPULAR_PARAM);
+        sortParams.add(MoviesFragment.TMDB_TOP_RATED_PARAM);
         for (int i = 0; i < sortParams.size(); i++) {
             String moviesDB = null;
             JSONArray moviesJSONDB = null;
@@ -79,18 +79,18 @@ public class MoviesService extends IntentService{
                 }
             }
             if (moviesDB != null) {
-                if (sortParam.equals(MainActivity.TMDB_TOP_RATED_PARAM)) {
-                    MainActivity.mTopRatedJSONData = moviesJSONDB;
-                    editor.putString(MainActivity.TMDB_TOP_RATED_PARAM, MainActivity.mTopRatedJSONData.toString());
+                if (sortParam.equals(MoviesFragment.TMDB_TOP_RATED_PARAM)) {
+                    MoviesFragment.mTopRatedJSONData = moviesJSONDB;
+                    editor.putString(MoviesFragment.TMDB_TOP_RATED_PARAM, MoviesFragment.mTopRatedJSONData.toString());
                 } else {
-                    MainActivity.mPopularJSONData = moviesJSONDB;
-                    editor.putString(MainActivity.TMDB_POPULAR_PARAM, MainActivity.mPopularJSONData.toString());
+                    MoviesFragment.mPopularJSONData = moviesJSONDB;
+                    editor.putString(MoviesFragment.TMDB_POPULAR_PARAM, MoviesFragment.mPopularJSONData.toString());
                 }
                 editor.apply();
             }
         }
 
         startService(new Intent(this, MoviesDataService.class));
-        MainActivity.isContentUpdated = true;
+        MoviesFragment.isContentUpdated = true;
     }
 }

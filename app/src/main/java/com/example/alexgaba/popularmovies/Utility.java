@@ -60,7 +60,7 @@ public class Utility {
 
     public static boolean isMovieExisting(String movieId, JSONArray movieDB) throws JSONException {
         for (int i = 0; i < movieDB.length(); i++) {
-            String id = movieDB.getJSONObject(i).getString(MainActivity.TMDB_JSON_ID_KEY);
+            String id = movieDB.getJSONObject(i).getString(MoviesFragment.TMDB_JSON_ID_KEY);
             if (movieId.equals(id)) {
                 return true;
             }
