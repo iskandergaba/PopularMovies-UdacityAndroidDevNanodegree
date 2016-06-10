@@ -19,7 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.alexgaba.popularmovies.ViewAdapters.MovieDataAdapter;
+import com.example.alexgaba.popularmovies.ViewAdapters.MoviesDataAdapter;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -165,7 +165,7 @@ public class DetailActivity extends AppCompatActivity {
 
         ListView mTrailers = (ListView)findViewById(R.id.trailers_list_view);
         if (mTrailers != null) {
-            mTrailers.setAdapter(new MovieDataAdapter(this, mTitles, R.drawable.ic_play));
+            mTrailers.setAdapter(new MoviesDataAdapter(this, mTitles, R.drawable.ic_play));
             Utility.setListViewHeightBasedOnChildren(mTrailers);
             mTrailers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -204,7 +204,7 @@ public class DetailActivity extends AppCompatActivity {
 
         ListView mReviews = (ListView)findViewById(R.id.reviews_list_view);
         if (mReviews != null) {
-            mReviews.setAdapter(new MovieDataAdapter(this, mAuthors, R.drawable.ic_review));
+            mReviews.setAdapter(new MoviesDataAdapter(this, mAuthors, R.drawable.ic_review));
             Utility.setListViewHeightBasedOnChildren(mReviews);
             mReviews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

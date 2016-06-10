@@ -12,11 +12,11 @@ import com.example.alexgaba.popularmovies.R;
 
 import java.util.ArrayList;
 
-public class MovieDataAdapter extends ArrayAdapter<String> {
+public class MoviesDataAdapter extends ArrayAdapter<String> {
 
     private final int iconResId;
 
-    public MovieDataAdapter(Activity mContext, ArrayList<String> mLabels, int iconResId) {
+    public MoviesDataAdapter(Activity mContext, ArrayList<String> mLabels, int iconResId) {
         super(mContext, 0, mLabels);
         this.iconResId = iconResId;
     }
