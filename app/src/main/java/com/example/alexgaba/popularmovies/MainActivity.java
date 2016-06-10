@@ -13,10 +13,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Spinner;
+
+import com.example.alexgaba.popularmovies.Services.MoviesService;
 import com.example.alexgaba.popularmovies.ViewAdapters.MoviesAdapter;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -42,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int SELECT_TOP_RATED = 1;
     public static final int SELECT_FAVORITE = 2;
 
-    public static boolean isUpdated = false;
+    public static boolean isContentUpdated = false;
     public static int mScrollPosition;
     public static GridView mPostersGrid;
     public static JSONArray mPopularJSONData;
@@ -55,16 +59,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        updateGrid();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                updateGrid();
+            }
+        };
+        prefs.registerOnSharedPreferenceChangeListener(listener);
+
         try {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             mPopularJSONData = new JSONArray(prefs.getString(TMDB_POPULAR_PARAM, new JSONArray().toString()));
             mTopRatedJSONData = new JSONArray(prefs.getString(TMDB_TOP_RATED_PARAM, new JSONArray().toString()));
             mFavoriteJSONData = new JSONArray(prefs.getString(TMDB_FAVORITE_PARAM, new JSONArray().toString()));
             mTrailersJSONData = new JSONArray(prefs.getString(TMDB_TRAILERS_PARAM, new JSONArray().toString()));
             mReviewsJSONData = new JSONArray(prefs.getString(TMDB_REVIEWS_PARAM, new JSONArray().toString()));
+            updateGrid();
             updateDB();
-        } catch (ExecutionException | InterruptedException | JSONException e) {
+        } catch (ExecutionException | JSONException e) {
             e.printStackTrace();
         }
     }
@@ -77,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             if (isFavoriteChanged() && sortParam.equals(TMDB_FAVORITE_PARAM)) {
                 updateDB();
             }
-        } catch (JSONException  | InterruptedException | ExecutionException e) {
+        } catch (JSONException | ExecutionException e) {
             e.printStackTrace();
         }
         super.onResume();
@@ -170,47 +181,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateDB() throws ExecutionException, InterruptedException, JSONException {
+    private void updateDB() throws ExecutionException, JSONException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
-        SharedPreferences.Editor editor = prefs.edit();
-        if (!isUpdated) {
-            boolean dataUpdateNeeded;
-
-            FetchMoviesTask popularMoviesTask = new FetchMoviesTask();
-            JSONArray JSONData = popularMoviesTask.execute(TMDB_POPULAR_PARAM).get();
-
-            if (JSONData != null && !mPopularJSONData.toString().equals(JSONData.toString())) {
-                dataUpdateNeeded = true;
-                mPopularJSONData = JSONData;
-                editor.putString(TMDB_POPULAR_PARAM, mPopularJSONData.toString());
-                if (sortParam.equals(TMDB_POPULAR_PARAM)) {
-                    updateGrid();
-                }
-            }
-
-            isUpdated = JSONData != null;
-
-            FetchMoviesTask topRatedMoviesTask = new FetchMoviesTask();
-            JSONData = topRatedMoviesTask.execute(TMDB_TOP_RATED_PARAM).get();
-
-            if (JSONData != null && !mTopRatedJSONData.toString().equals(JSONData.toString())) {
-                dataUpdateNeeded = true;
-                mTopRatedJSONData = JSONData;
-                editor.putString(TMDB_TOP_RATED_PARAM, mTopRatedJSONData.toString());
-                if (sortParam.equals(TMDB_TOP_RATED_PARAM)) {
-                    updateGrid();
-                }
-            }
-            editor.apply();
-            isUpdated = isUpdated && JSONData != null;
-
-            dataUpdateNeeded = mTrailersJSONData.length() == 0 || mReviewsJSONData.length() == 0;
-
-            if (dataUpdateNeeded) {
-                updateMoviesData();
-
-            }
+        if (!isContentUpdated) {
+            startService(new Intent(this, MoviesService.class));
         }
 
         if (isFavoriteChanged()) {
@@ -219,10 +194,9 @@ public class MainActivity extends AppCompatActivity {
                 updateGrid();
             }
         }
-
     }
 
-    public void updateGrid() {
+    private void updateGrid() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         final String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
         mPostersGrid = (GridView)findViewById(R.id.movies_gridview);
@@ -264,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public String[] getPosters(String sortParam) throws JSONException {
+    private String[] getPosters(String sortParam) throws JSONException {
 
         JSONArray moviesDB;
         switch (sortParam) {
@@ -288,80 +262,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return urls.toArray(new String[urls.size()]);
-    }
-
-    private void updateMoviesData() throws ExecutionException, InterruptedException, JSONException {
-
-        for (int i = 0; i < mPopularJSONData.length(); i++) {
-            String id = mPopularJSONData.getJSONObject(i).getString(TMDB_JSON_ID_KEY);
-            if (!Utility.isMovieExisting(id, mTrailersJSONData)) {
-                FetchMovieDataTask movieTrailersTask = new FetchMovieDataTask();
-                JSONObject trailersJSON = movieTrailersTask.execute(id, TMDB_TRAILERS_PARAM).get();
-                mTrailersJSONData = Utility.JsonAddObjectToArray(mTrailersJSONData, trailersJSON);
-            }
-
-            if (!Utility.isMovieExisting(id, mReviewsJSONData)) {
-                FetchMovieDataTask movieReviewsTask = new FetchMovieDataTask();
-                JSONObject reviewsJSON = movieReviewsTask.execute(id, TMDB_REVIEWS_PARAM).get();
-                mReviewsJSONData = Utility.JsonAddObjectToArray(mReviewsJSONData, reviewsJSON);
-            }
-        }
-
-        for (int i = 0; i < mTopRatedJSONData.length(); i++) {
-            String id = mTopRatedJSONData.getJSONObject(i).getString(TMDB_JSON_ID_KEY);
-            if (!Utility.isMovieExisting(id, mTrailersJSONData)) {
-                FetchMovieDataTask movieTrailersTask = new FetchMovieDataTask();
-                JSONObject trailersJSON = movieTrailersTask.execute(id, TMDB_TRAILERS_PARAM).get();
-                mTrailersJSONData = Utility.JsonAddObjectToArray(mTrailersJSONData, trailersJSON);
-            }
-
-            if (!Utility.isMovieExisting(id, mReviewsJSONData)) {
-                FetchMovieDataTask movieReviewsTask = new FetchMovieDataTask();
-                JSONObject reviewsJSON = movieReviewsTask.execute(id, TMDB_REVIEWS_PARAM).get();
-                mReviewsJSONData = Utility.JsonAddObjectToArray(mReviewsJSONData, reviewsJSON);
-            }
-        }
-
-        for (int i = 0; i < mFavoriteJSONData.length(); i++) {
-            String id = mFavoriteJSONData.getJSONObject(i).getString(TMDB_JSON_ID_KEY);
-            if (!Utility.isMovieExisting(id, mTrailersJSONData)) {
-                FetchMovieDataTask movieTrailersTask = new FetchMovieDataTask();
-                JSONObject trailersJSON = movieTrailersTask.execute(id, TMDB_TRAILERS_PARAM).get();
-                mTrailersJSONData = Utility.JsonAddObjectToArray(mTrailersJSONData, trailersJSON);
-            }
-
-            if (!Utility.isMovieExisting(id, mReviewsJSONData)) {
-                FetchMovieDataTask movieReviewsTask = new FetchMovieDataTask();
-                JSONObject reviewsJSON = movieReviewsTask.execute(id, TMDB_REVIEWS_PARAM).get();
-                mReviewsJSONData = Utility.JsonAddObjectToArray(mReviewsJSONData, reviewsJSON);
-            }
-        }
-
-        for (int i = 0; i < mReviewsJSONData.length(); i++) {
-            JSONObject movie = mReviewsJSONData.getJSONObject(i);
-            String id = movie.getString(TMDB_JSON_ID_KEY);
-            if (!Utility.isMovieExisting(id, mPopularJSONData) &&
-                    !Utility.isMovieExisting(id, mTopRatedJSONData) &&
-                    !Utility.isMovieExisting(id, mFavoriteJSONData)) {
-                mReviewsJSONData = Utility.JsonRemoveObjectFromArray(mReviewsJSONData, movie);
-            }
-        }
-
-        for (int i = 0; i < mTrailersJSONData.length(); i++) {
-            JSONObject movie = mTrailersJSONData.getJSONObject(i);
-            String id = movie.getString(TMDB_JSON_ID_KEY);
-            if (!Utility.isMovieExisting(id, mPopularJSONData) &&
-                    !Utility.isMovieExisting(id, mTopRatedJSONData) &&
-                    !Utility.isMovieExisting(id, mFavoriteJSONData)) {
-                mTrailersJSONData = Utility.JsonRemoveObjectFromArray(mTrailersJSONData, movie);
-            }
-        }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(TMDB_TRAILERS_PARAM, mTrailersJSONData.toString());
-        editor.putString(TMDB_REVIEWS_PARAM, mReviewsJSONData.toString());
-        editor.apply();
     }
 
     private boolean isFavoriteChanged() throws JSONException {

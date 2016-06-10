@@ -97,11 +97,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void buildLayout() {
-        try {
-            mMovie = new JSONObject(getIntent().getExtras().getString("movie"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
         String backDropURL = MainActivity.TMDB_IMAGE_BASE_URL + MainActivity.TMDB_BACKDROP_SIZE_PARAM;
         String posterURL = MainActivity.TMDB_IMAGE_BASE_URL + MainActivity.TMDB_POSTER_SIZE_PARAM;
         String movieTitle = null;
@@ -110,6 +106,7 @@ public class DetailActivity extends AppCompatActivity {
         String releaseDate = null;
         String Id = null;
         try {
+            mMovie = new JSONObject(getIntent().getExtras().getString("movie"));
             backDropURL += mMovie.getString(MainActivity.TMDB_JSON_BACKDROP_KEY).substring(1);
             posterURL += mMovie.getString(MainActivity.TMDB_JSON_POSTER_KEY).substring(1);
             movieTitle = mMovie.getString(MainActivity.TMDB_JSON_TITLE_KEY);
