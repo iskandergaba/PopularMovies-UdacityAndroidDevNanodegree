@@ -1,6 +1,5 @@
 package com.example.alexgaba.popularmovies;
 
-
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.alexgaba.popularmovies.Services.MoviesService;
 import com.example.alexgaba.popularmovies.ViewAdapters.MoviesAdapter;
@@ -245,6 +245,8 @@ public class MoviesFragment extends Fragment {
                         }
 
                         else {
+                            TextView noMovie = (TextView)getActivity().findViewById(R.id.no_movie_text_view);
+                            noMovie.setText("");
                             Bundle args = new Bundle();
                             args.putString("movie", movie);
                             DetailFragment fragment = new DetailFragment();

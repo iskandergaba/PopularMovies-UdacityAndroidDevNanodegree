@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:focusableInTouchMode="true">
         <ImageView
@@ -42,13 +42,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_spacing"
+                android:layout_marginStart="@dimen/activity_horizontal_spacing"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Popular Movie Title"
                 android:textSize="@dimen/detail_title_text_size"
                 android:layout_gravity="center_vertical"
-                android:fontFamily="sans-serif"
                 android:textColor="@color/colorTextDark"
                 android:id="@+id/detail_title_textview" />
         </LinearLayout>
@@ -69,8 +69,7 @@
             android:paddingLeft="@dimen/activity_vertical_margin"
             android:paddingRight="@dimen/activity_vertical_margin"
             android:paddingBottom="@dimen/activity_horizontal_spacing"
-            android:textColor="@color/colorTextDark"
-            android:text="Plot description"/>
+            android:textColor="@color/colorTextDark"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,8 +91,7 @@
                 android:paddingLeft="@dimen/activity_vertical_spacing"
                 android:paddingRight="@dimen/activity_vertical_spacing"
                 android:paddingBottom="@dimen/activity_horizontal_spacing"
-                android:textColor="@color/colorTextDark"
-                android:text="10/10"/>
+                android:textColor="@color/colorTextDark" />
         </LinearLayout>
 
         <LinearLayout
@@ -116,19 +114,36 @@
                 android:paddingLeft="@dimen/activity_vertical_spacing"
                 android:paddingRight="@dimen/activity_vertical_spacing"
                 android:paddingBottom="@dimen/activity_horizontal_spacing"
-                android:textColor="@color/colorTextDark"
-                android:text="29-05-2016"/>
+                android:textColor="@color/colorTextDark"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/trailers_title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Trailers (1)"
-            android:textSize="@dimen/detail_subtitle_text_size"
-            android:paddingLeft="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_horizontal_spacing"
-            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/trailers_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/trailers_textview"
+                android:textSize="@dimen/detail_subtitle_text_size"
+                android:paddingLeft="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_vertical_spacing"
+                android:paddingStart="@dimen/activity_vertical_margin"
+                android:paddingEnd="@dimen/activity_vertical_spacing"
+                android:paddingBottom="@dimen/activity_horizontal_spacing"
+                android:textStyle="bold"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_spacing"
+                android:layout_marginStart="@dimen/activity_horizontal_spacing"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
 
         <ListView
             android:id="@+id/trailers_list_view"
@@ -138,15 +153,34 @@
             android:clickable="true">
         </ListView>
 
-        <TextView
-            android:id="@+id/reviews_title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Reviews (1)"
-            android:textSize="@dimen/detail_subtitle_text_size"
-            android:paddingLeft="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_horizontal_spacing"
-            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/reviews_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reviews_textview"
+                android:textSize="@dimen/detail_subtitle_text_size"
+                android:paddingLeft="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_vertical_spacing"
+                android:paddingStart="@dimen/activity_vertical_margin"
+                android:paddingEnd="@dimen/activity_vertical_spacing"
+                android:paddingBottom="@dimen/activity_horizontal_spacing"
+                android:textStyle="bold"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_spacing"
+                android:layout_marginStart="@dimen/activity_horizontal_spacing"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
 
         <ListView
             android:id="@+id/reviews_list_view"

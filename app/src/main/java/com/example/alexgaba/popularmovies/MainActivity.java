@@ -15,10 +15,4 @@ public class MainActivity extends AppCompatActivity {
 
         mTwoPane = findViewById(R.id.detail_container) != null;
     }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-
-        super.onSaveInstanceState(outState);
-    }
 }

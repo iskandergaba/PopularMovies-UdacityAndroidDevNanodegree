@@ -3,20 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:baselineAligned="false"
+    android:baselineAligned="true"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     tools:context="com.example.alexgaba.popularmovies.MainActivity">
-
-    <!--
-    This layout is a two-pane layout for the Items master/detail flow.
-    -->
-    <!--<FrameLayout-->
-    <!--android:id="@+id/movies_container"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_weight="6"-->
-    <!--tools:layout="@layout/fragment_movies" />-->
 
     <fragment
         android:id="@+id/movies_container"
@@ -30,8 +20,15 @@
         android:id="@+id/detail_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="8"
+        android:layout_weight="10"
         tools:layour="@layout/fragment_detail">
+        <TextView
+            android:id="@+id/no_movie_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_movie_selected"
+            android:textSize="22sp"
+            android:layout_gravity="center"/>
 
     </FrameLayout>
 

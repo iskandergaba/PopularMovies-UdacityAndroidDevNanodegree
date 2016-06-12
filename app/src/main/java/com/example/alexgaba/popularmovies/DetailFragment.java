@@ -182,7 +182,7 @@ public class DetailFragment extends Fragment {
 
         TextView TrailersTextView = (TextView)rootView.findViewById(R.id.trailers_title_text_view);
         if (TrailersTextView != null)
-            TrailersTextView.setText(MessageFormat.format("Trailers ({0})", mTitles.size()));
+            TrailersTextView.setText(MessageFormat.format("{0} ({1})", TrailersTextView.getText(), mTitles.size()));
 
         ListView mTrailers = (ListView)rootView.findViewById(R.id.trailers_list_view);
         if (mTrailers != null) {
@@ -221,7 +221,7 @@ public class DetailFragment extends Fragment {
 
         TextView ReviewsTextView = (TextView)rootView.findViewById(R.id.reviews_title_text_view);
         if (ReviewsTextView != null)
-            ReviewsTextView.setText(MessageFormat.format("Reviews ({0})", mAuthors.size()));
+            ReviewsTextView.setText(MessageFormat.format("{0} ({1})", ReviewsTextView.getText(), mAuthors.size()));
 
         ListView mReviews = (ListView)rootView.findViewById(R.id.reviews_list_view);
         if (mReviews != null) {
@@ -235,8 +235,13 @@ public class DetailFragment extends Fragment {
             });
         }
 
+        String trailer = "";
+        if (!mTrailerURLs.isEmpty()) {
+            trailer = mTrailerURLs.get(0);
+        }
+
         mMovieDetails = "Movie Title: " + movieTitle + "\n\nPlot Synopsis: " + plotSynopsis +
-                "\n\nRating: " + rating + "\n\nRelease Date: " + releaseDate;
+                "\n\nRating: " + rating + "\n\nRelease Date: " + releaseDate + "\n\nTrailer: " + trailer;
 
         Picasso
                 .with(getActivity())
@@ -252,15 +257,8 @@ public class DetailFragment extends Fragment {
     }
 
     private boolean isFavorite() throws JSONException {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        JSONArray favorite = new JSONArray(prefs.getString(MoviesFragment.TMDB_FAVORITE_PARAM, new JSONArray().toString()));
-        for (int i = 0; i < favorite.length(); i++) {
-            JSONObject fMovie = favorite.getJSONObject(i);
-            if (fMovie.toString().equals(mMovie.toString())) {
-                return true;
-            }
-        }
-        return false;
+        String id = mMovie.getString(TMDB_JSON_ID_KEY);
+        return Utility.isMovieExisting(id, MoviesFragment.mFavoriteJSONData);
     }
 
     private void addFavorite() throws JSONException {
@@ -273,7 +271,7 @@ public class DetailFragment extends Fragment {
         }
         fList.add(mMovie);
         favorite = new JSONArray(fList);
-
+        MoviesFragment.mFavoriteJSONData = favorite;
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(MoviesFragment.TMDB_FAVORITE_PARAM, favorite.toString());
         editor.apply();
@@ -289,14 +287,17 @@ public class DetailFragment extends Fragment {
         JSONArray favorite = new JSONArray(prefs.getString(MoviesFragment.TMDB_FAVORITE_PARAM, new JSONArray().toString()));
         ArrayList<JSONObject> fList = new ArrayList<>();
 
+        String id = mMovie.getString(TMDB_JSON_ID_KEY);
         for (int i = 0; i < favorite.length(); i++){
             JSONObject fMovie = favorite.getJSONObject(i);
-            if (!fMovie.toString().equals(mMovie.toString())) {
+            String currId = fMovie.getString(TMDB_JSON_ID_KEY);
+            if (!currId.equals(id)) {
                 fList.add(fMovie);
             }
         }
 
         favorite = new JSONArray(fList);
+        MoviesFragment.mFavoriteJSONData = favorite;
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(MoviesFragment.TMDB_FAVORITE_PARAM, favorite.toString());
         editor.apply();

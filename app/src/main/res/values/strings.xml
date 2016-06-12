@@ -22,7 +22,8 @@
     <string name="image_description_backdrop">The backdrop of the movie</string>
     <string name="image_description_poster">The poster of the movie</string>
     <string name="image_description_play">Play trailer</string>
-    <string name="title_activity_main2">Details</string>
-
+    <string name="trailers_textview">Trailers</string>
+    <string name="reviews_textview">Reviews</string>
+    <string name="no_movie_selected">No movie selected</string>
 
 </resources>
