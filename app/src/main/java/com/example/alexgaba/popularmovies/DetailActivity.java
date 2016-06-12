@@ -19,7 +19,7 @@ public class DetailActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        String movie = getIntent().getStringExtra("movie");
+        String movie = getIntent().getStringExtra(DetailFragment.MOVIE_PARAM);
         Bundle args = new Bundle();
         args.putString("movie", movie);
         DetailFragment fragment = new DetailFragment();

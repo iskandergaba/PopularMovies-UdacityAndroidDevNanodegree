@@ -30,20 +30,21 @@ import java.util.ArrayList;
 
 public class DetailFragment extends Fragment {
 
-    private static final String APP_SHARE_HASHTAG = "\n\nShared by #PopularMoviesApp";
-    private static final String TMDB_RESULTS_PARAM = "results";
+    public static final String APP_SHARE_HASHTAG = "\n\nShared by #PopularMoviesApp";
+    public static final String TMDB_JSON_RESULTS_KEY = "results";
     public static final String TMDB_JSON_BACKDROP_KEY = "backdrop_path";
     public static final String TMDB_JSON_TITLE_KEY = "original_title";
     public static final String TMDB_JSON_PLOT_KEY = "overview";
     public static final String TMDB_JSON_RATING_KEY = "vote_average";
     public static final String TMDB_JSON_RELEASE_DATE_KEY = "release_date";
     public static final String TMDB_JSON_ID_KEY = "id";
-    private static final String TMDB_TRAILER_URL_PARAM = "key";
-    private static final String TMDB_REVIEW_URL_PARAM = "url";
-    private static final String TMDB_TITLE_PARAM = "name";
-    private static final String TMDB_AUTHOR_PARAM = "author";
-    private static final String YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
+    public static final String TMDB_JSON_TRAILER_URL_KEY = "key";
+    public static final String TMDB_JSON_REVIEW_URL_KEY = "url";
+    public static final String TMDB_JSON_TRAILER_TITLE_PARAM = "name";
+    public static final String TMDB_JSON_AUTHOR_KEY = "author";
+    public static final String YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
     public static final String TMDB_BACKDROP_SIZE_PARAM = "w780/";
+    public static final String MOVIE_PARAM = "movie";
     private JSONObject mMovie = null;
     private String mMovieDetails;
 
@@ -57,7 +58,7 @@ public class DetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_detail,
                 container, false);
         try {
-            mMovie = new JSONObject(getArguments().getString("movie"));
+            mMovie = new JSONObject(getArguments().getString(MOVIE_PARAM));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -101,7 +102,7 @@ public class DetailFragment extends Fragment {
                     updateFavoriteMenuItem(item);
                     if (MainActivity.mTwoPane && sortParam.equals(MoviesFragment.TMDB_FAVORITE_PARAM)) {
                         Bundle args = new Bundle();
-                        args.putString("movie", mMovie.toString());
+                        args.putString(MOVIE_PARAM, mMovie.toString());
                         DetailFragment fragment = new DetailFragment();
                         fragment.setArguments(args);
                         getActivity().getFragmentManager().beginTransaction()
@@ -164,7 +165,7 @@ public class DetailFragment extends Fragment {
             for (int i = 0; i < MoviesFragment.mTrailersJSONData.length(); i++) {
                 String curId = MoviesFragment.mTrailersJSONData.getJSONObject(i).getString(TMDB_JSON_ID_KEY);
                 if (curId.equals(Id)) {
-                    trailersJSON = MoviesFragment.mTrailersJSONData.getJSONObject(i).getJSONArray(TMDB_RESULTS_PARAM);
+                    trailersJSON = MoviesFragment.mTrailersJSONData.getJSONObject(i).getJSONArray(TMDB_JSON_RESULTS_KEY);
                     break;
                 }
             }
@@ -172,8 +173,8 @@ public class DetailFragment extends Fragment {
             if (trailersJSON != null) {
                 for (int i = 0; i < trailersJSON.length(); i++) {
                     JSONObject trailer = trailersJSON.getJSONObject(i);
-                    mTrailerURLs.add(YOUTUBE_BASE_URL + trailer.getString(TMDB_TRAILER_URL_PARAM));
-                    mTitles.add(trailer.getString(TMDB_TITLE_PARAM));
+                    mTrailerURLs.add(YOUTUBE_BASE_URL + trailer.getString(TMDB_JSON_TRAILER_URL_KEY));
+                    mTitles.add(trailer.getString(TMDB_JSON_TRAILER_TITLE_PARAM));
                 }
             }
         } catch (JSONException e) {
@@ -203,7 +204,7 @@ public class DetailFragment extends Fragment {
             for (int i = 0; i < MoviesFragment.mReviewsJSONData.length(); i++) {
                 String curId = MoviesFragment.mReviewsJSONData.getJSONObject(i).getString(TMDB_JSON_ID_KEY);
                 if (curId.equals(Id)) {
-                    reviewsJSON = MoviesFragment.mReviewsJSONData.getJSONObject(i).getJSONArray(TMDB_RESULTS_PARAM);
+                    reviewsJSON = MoviesFragment.mReviewsJSONData.getJSONObject(i).getJSONArray(TMDB_JSON_RESULTS_KEY);
                     break;
                 }
             }
@@ -211,8 +212,8 @@ public class DetailFragment extends Fragment {
             if (reviewsJSON != null) {
                 for (int i = 0; i < reviewsJSON.length(); i++) {
                     JSONObject review = reviewsJSON.getJSONObject(i);
-                    mAuthors.add("Review by: " + review.getString(TMDB_AUTHOR_PARAM));
-                    mReviewURLs.add(review.getString(TMDB_REVIEW_URL_PARAM));
+                    mAuthors.add("Review by: " + review.getString(TMDB_JSON_AUTHOR_KEY));
+                    mReviewURLs.add(review.getString(TMDB_JSON_REVIEW_URL_KEY));
                 }
             }
         } catch (JSONException e) {
@@ -258,7 +259,9 @@ public class DetailFragment extends Fragment {
 
     private boolean isFavorite() throws JSONException {
         String id = mMovie.getString(TMDB_JSON_ID_KEY);
-        return Utility.isMovieExisting(id, MoviesFragment.mFavoriteJSONData);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        JSONArray favorite = new JSONArray(prefs.getString(MoviesFragment.TMDB_FAVORITE_PARAM, new JSONArray().toString()));
+        return Utility.isMovieExisting(id, favorite);
     }
 
     private void addFavorite() throws JSONException {
@@ -271,7 +274,6 @@ public class DetailFragment extends Fragment {
         }
         fList.add(mMovie);
         favorite = new JSONArray(fList);
-        MoviesFragment.mFavoriteJSONData = favorite;
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(MoviesFragment.TMDB_FAVORITE_PARAM, favorite.toString());
         editor.apply();
@@ -297,7 +299,6 @@ public class DetailFragment extends Fragment {
         }
 
         favorite = new JSONArray(fList);
-        MoviesFragment.mFavoriteJSONData = favorite;
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(MoviesFragment.TMDB_FAVORITE_PARAM, favorite.toString());
         editor.apply();

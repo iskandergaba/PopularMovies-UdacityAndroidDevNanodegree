@@ -178,16 +178,7 @@ public class MoviesFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
-                startActivity(settingsIntent);
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateDB() throws ExecutionException, JSONException {
@@ -240,7 +231,7 @@ public class MoviesFragment extends Fragment {
 
                         if (!MainActivity.mTwoPane) {
                             Intent detailIntent = new Intent(v.getContext(), DetailActivity.class);
-                            detailIntent.putExtra("movie", movie);
+                            detailIntent.putExtra(DetailFragment.MOVIE_PARAM, movie);
                             startActivity(detailIntent);
                         }
 
@@ -248,7 +239,7 @@ public class MoviesFragment extends Fragment {
                             TextView noMovie = (TextView)getActivity().findViewById(R.id.no_movie_text_view);
                             noMovie.setText("");
                             Bundle args = new Bundle();
-                            args.putString("movie", movie);
+                            args.putString(DetailFragment.MOVIE_PARAM, movie);
                             DetailFragment fragment = new DetailFragment();
                             fragment.setArguments(args);
                             getActivity().getFragmentManager().beginTransaction()
