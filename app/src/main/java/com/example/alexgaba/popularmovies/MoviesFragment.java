@@ -1,5 +1,6 @@
 package com.example.alexgaba.popularmovies;
 
+
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -209,6 +210,9 @@ public class MoviesFragment extends Fragment {
         final String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
         mPostersGrid = (GridView)rootView.findViewById(R.id.movies_gridview);
         try {
+            mPopularJSONData = new JSONArray(prefs.getString(TMDB_POPULAR_PARAM, new JSONArray().toString()));
+            mTopRatedJSONData = new JSONArray(prefs.getString(TMDB_TOP_RATED_PARAM, new JSONArray().toString()));
+            mFavoriteJSONData = new JSONArray(prefs.getString(TMDB_FAVORITE_PARAM, new JSONArray().toString()));
             String[] posterThumbs = getPosters(sortParam);
             if (mPostersGrid != null) {
                 mPostersGrid.setAdapter(new MoviesAdapter(getActivity(),  posterThumbs));
@@ -234,10 +238,21 @@ public class MoviesFragment extends Fragment {
                             e.printStackTrace();
                         }
 
-                        Intent detailIntent = new Intent(v.getContext(), DetailActivity.class);
-                        detailIntent.putExtra("movie", movie);
+                        if (!MainActivity.mTwoPane) {
+                            Intent detailIntent = new Intent(v.getContext(), DetailActivity.class);
+                            detailIntent.putExtra("movie", movie);
+                            startActivity(detailIntent);
+                        }
 
-                        startActivity(detailIntent);
+                        else {
+                            Bundle args = new Bundle();
+                            args.putString("movie", movie);
+                            DetailFragment fragment = new DetailFragment();
+                            fragment.setArguments(args);
+                            getActivity().getFragmentManager().beginTransaction()
+                                    .replace(R.id.detail_container, fragment)
+                                    .commit();
+                        }
                     }
                 });
             }

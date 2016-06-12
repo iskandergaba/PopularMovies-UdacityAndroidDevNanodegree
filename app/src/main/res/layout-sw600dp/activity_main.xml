@@ -1,4 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,19 +11,28 @@
     <!--
     This layout is a two-pane layout for the Items master/detail flow.
     -->
-    <fragment
-    android:name="com.example.alexgaba.popularmovies.MainActivity"
-    android:layout_width="0dp"
-    android:layout_height="match_parent"
-    android:layout_weight="6"
-    tools:layout="@layout/fragment_movies"
-    android:id="@+id/main_container" />
+    <!--<FrameLayout-->
+    <!--android:id="@+id/movies_container"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="6"-->
+    <!--tools:layout="@layout/fragment_movies" />-->
 
     <fragment
-        android:name="com.example.alexgaba.popularmovies.DetailFragment"
+        android:id="@+id/movies_container"
+        android:name="com.example.alexgaba.popularmovies.MoviesFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        tools:layout="@layout/fragment_detail"
+        tools:layout="@layout/fragment_movies"
         android:layout_weight="8" />
+
+    <FrameLayout
+        android:id="@+id/detail_container"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8"
+        tools:layour="@layout/fragment_detail">
+
+    </FrameLayout>
 
 </LinearLayout>

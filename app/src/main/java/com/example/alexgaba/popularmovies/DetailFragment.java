@@ -56,6 +56,11 @@ public class DetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail,
                 container, false);
+        try {
+            mMovie = new JSONObject(getArguments().getString("movie"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         buildLayout(view);
         return view;
@@ -63,18 +68,20 @@ public class DetailFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.detail_menu, menu);
-        MenuItem favorite = menu.getItem(0);
+        MenuItem favorite = menu.findItem(R.id.action_favorite);
         try {
             updateFavoriteMenuItem(favorite);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_share:
@@ -92,6 +99,15 @@ public class DetailFragment extends Fragment {
                         addFavorite();
                     }
                     updateFavoriteMenuItem(item);
+                    if (MainActivity.mTwoPane && sortParam.equals(MoviesFragment.TMDB_FAVORITE_PARAM)) {
+                        Bundle args = new Bundle();
+                        args.putString("movie", mMovie.toString());
+                        DetailFragment fragment = new DetailFragment();
+                        fragment.setArguments(args);
+                        getActivity().getFragmentManager().beginTransaction()
+                                .replace(R.id.detail_container, fragment)
+                                .commit();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -112,7 +128,6 @@ public class DetailFragment extends Fragment {
         String releaseDate = null;
         String Id = null;
         try {
-            mMovie = new JSONObject(getActivity().getIntent().getExtras().getString("movie"));
             backDropURL += mMovie.getString(TMDB_JSON_BACKDROP_KEY).substring(1);
             posterURL += mMovie.getString(MoviesFragment.TMDB_JSON_POSTER_KEY).substring(1);
             movieTitle = mMovie.getString(TMDB_JSON_TITLE_KEY);

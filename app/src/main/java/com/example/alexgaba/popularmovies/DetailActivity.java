@@ -19,7 +19,12 @@ public class DetailActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, new DetailFragment()).commit();
+        String movie = getIntent().getStringExtra("movie");
+        Bundle args = new Bundle();
+        args.putString("movie", movie);
+        DetailFragment fragment = new DetailFragment();
+        fragment.setArguments(args);
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment).commit();
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
