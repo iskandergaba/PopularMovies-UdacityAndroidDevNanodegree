@@ -78,7 +78,7 @@ public class MoviesService extends IntentService{
                     e.printStackTrace();
                 }
             }
-            if (moviesDB != null) {
+            if (moviesJSONDB != null) {
                 if (sortParam.equals(MoviesFragment.TMDB_TOP_RATED_PARAM)) {
                     MoviesFragment.mTopRatedJSONData = moviesJSONDB;
                     editor.putString(MoviesFragment.TMDB_TOP_RATED_PARAM, MoviesFragment.mTopRatedJSONData.toString());
