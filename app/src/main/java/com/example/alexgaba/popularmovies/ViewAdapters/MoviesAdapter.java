@@ -6,8 +6,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+
 import com.example.alexgaba.popularmovies.R;
 import com.squareup.picasso.Picasso;
+
 import static android.widget.GridView.AUTO_FIT;
 
 public class MoviesAdapter extends BaseAdapter {

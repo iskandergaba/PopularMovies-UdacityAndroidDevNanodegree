@@ -37,6 +37,7 @@
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:scaleType="fitXY"
                 android:background="@color/colorImageLoadingBackground"
+                android:transitionName="@string/shared_element_transition"
                 android:contentDescription="@string/image_description_poster" />
             <TextView
                 android:layout_width="wrap_content"

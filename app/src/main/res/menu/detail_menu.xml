@@ -9,7 +9,8 @@
         android:icon="@drawable/action_favorite_off"
         android:title=""/>
 
-    <item android:id="@+id/action_share"
+    <item
+        android:id="@+id/action_share"
         app:showAsAction="ifRoom"
         android:title="@string/action_share"
         android:icon="@android:drawable/ic_menu_share"/>

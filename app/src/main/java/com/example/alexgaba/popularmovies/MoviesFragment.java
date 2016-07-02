@@ -1,5 +1,7 @@
 package com.example.alexgaba.popularmovies;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -199,7 +201,9 @@ public class MoviesFragment extends Fragment {
     private void updateGrid() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         final String sortParam = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default_value));
+        final Activity activity = getActivity();
         mPostersGrid = (GridView)rootView.findViewById(R.id.movies_gridview);
+        mPostersGrid.setEmptyView(getActivity().findViewById(R.id.no_content_text_view));
         try {
             mPopularJSONData = new JSONArray(prefs.getString(TMDB_POPULAR_PARAM, new JSONArray().toString()));
             mTopRatedJSONData = new JSONArray(prefs.getString(TMDB_TOP_RATED_PARAM, new JSONArray().toString()));
@@ -228,11 +232,21 @@ public class MoviesFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
+                        Intent detailIntent = new Intent(v.getContext(), DetailActivity.class);
+                        detailIntent.putExtra(DetailFragment.MOVIE_PARAM, movie);
                         if (!MainActivity.mTwoPane) {
-                            Intent detailIntent = new Intent(v.getContext(), DetailActivity.class);
-                            detailIntent.putExtra(DetailFragment.MOVIE_PARAM, movie);
-                            startActivity(detailIntent);
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                                View sharedView = mPostersGrid.getChildAt(position - mPostersGrid.getFirstVisiblePosition());
+                                sharedView.setTransitionName(activity.getString(R.string.shared_element_transition));
+                                Bundle bundle = ActivityOptions
+                                        .makeSceneTransitionAnimation(activity,
+                                                sharedView,
+                                                sharedView.getTransitionName())
+                                        .toBundle();
+                                startActivity(detailIntent, bundle);
+                            } else {
+                                startActivity(detailIntent);
+                            }
                         }
 
                         else {
