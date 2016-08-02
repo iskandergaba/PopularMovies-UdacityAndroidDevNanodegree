@@ -1,4 +1,4 @@
-# Udacity Android Developer Nanodegree Project: Popular-Movies Stage 1 & Stage 2
+# Udacity Android Developer Nanodegree Project: Popular Movies Stage 1 & Stage 2
 
 Built an app, optimized for tablets, to help users discover popular and highly rated movies on the web.
 It displays a scrolling grid of movie trailers, launches a details screen whenever a particular movie is selected,
