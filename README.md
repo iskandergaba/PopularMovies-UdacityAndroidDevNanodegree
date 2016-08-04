@@ -20,6 +20,12 @@ You will fetch data from the Internet with theMovieDB API.
 You will use adapters and custom list layouts to populate list views.
 You will incorporate libraries to simplify the amount of code you need to write
 
+###Stage 2:
+
+You will build a fully featured application that looks and feels natural onthe latest
+Android operating system (Lollipop, as of May 2015).
+You will optimize the UI experience for both phones and tablets.
+
 ##Why this Project?
 ###Stage 1:
 To become an Android developer, you must know how to bring particular mobile experiences to life.
