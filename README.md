@@ -5,14 +5,6 @@ It displays a scrolling grid of movie trailers, launches a details screen whenev
 allows users to save favorites, play trailers, and read user reviews. This app utilizes core Android user interface
 components and fetches movie information using themoviedb.org web API.
 
-## Why this Project
-###Stage 1:
-
-As Android projects grow in complexity, it becomes necessary to customize the
-behavior of the Gradle build tool, allowing automation of repetitive tasks.
-Particularly, factoring functionality into libraries and creating product
-flavors allow for much bigger projects with minimal added complexity.
-
 ##What Will I Learn?
 ###Stage 1:
 
@@ -27,7 +19,7 @@ Android operating system (Lollipop, as of May 2015).
 You will optimize the UI experience for both phones and tablets.
 
 ##Why this Project?
-###Stage 1:
+
 To become an Android developer, you must know how to bring particular mobile experiences to life.
 Specifically, you need to know how to build clean and compelling user interfaces (UIs),
 fetch data from network services, and optimize the experience for various mobile devices.
