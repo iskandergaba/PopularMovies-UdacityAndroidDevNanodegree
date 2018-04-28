@@ -5,8 +5,8 @@ It displays a scrolling grid of movie trailers, launches a details screen whenev
 allows users to save favorites, play trailers, and read user reviews. This app utilizes core Android user interface
 components and fetches movie information using themoviedb.org web API.
 
-##Project Overview
-###Stage 1:
+## Project Overview
+### Stage 1:
 
 Most of us can relate to kicking back on the couch and enjoying a movie with friends and family. In this project, you’ll build an app to allow users to discover the most popular movies playing. We will split the development of this app in two stages. First, let's talk about stage 1. In this stage you’ll build the core experience of your movies app.
 
@@ -22,20 +22,20 @@ You app will:
         user rating (called vote_average in the api)
         release date
 
-##What Will I Learn?
-###Stage 1:
+## What Will I Learn?
+### Stage 1:
 
 You will fetch data from the Internet with theMovieDB API.
 You will use adapters and custom list layouts to populate list views.
 You will incorporate libraries to simplify the amount of code you need to write
 
-###Stage 2:
+### Stage 2:
 
 You will build a fully featured application that looks and feels natural onthe latest
 Android operating system (Lollipop, as of May 2015).
 You will optimize the UI experience for both phones and tablets.
 
-##Why this Project?
+## Why this Project?
 
 To become an Android developer, you must know how to bring particular mobile experiences to life.
 Specifically, you need to know how to build clean and compelling user interfaces (UIs),
